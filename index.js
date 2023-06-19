@@ -29,7 +29,9 @@ const verifyJWT = (req, res, next) => {
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.swu9d.mongodb.net/?retryWrites=true&w=majority`;
+
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.4hmio3i.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -45,11 +47,11 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const usersCollection = client.db("bistroDb").collection("users");
-    const menuCollection = client.db("bistroDb").collection("menu");
-    const reviewCollection = client.db("bistroDb").collection("reviews");
-    const cartCollection = client.db("bistroDb").collection("carts");
-    const paymentCollection = client.db("bistroDb").collection("payments");
+    const usersCollection = client.db("rupsojjaDb").collection("users");
+    const menuCollection = client.db("rupsojjaDb").collection("menu");
+    const reviewCollection = client.db("rupsojjaDb").collection("reviews");
+    const cartCollection = client.db("rupsojjaDb").collection("carts");
+    const paymentCollection = client.db("rupsojjaDb").collection("payments");
 
     app.post('/jwt', (req, res) => {
       const user = req.body;
@@ -93,6 +95,12 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
+    app.delete('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    })
 
     // security layer: verifyJWT
     // email same
